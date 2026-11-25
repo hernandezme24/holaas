@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+<!-- STITCH_THREEJS_START:ANIMATION_4 class="fixed inset-0 w-full h-full bg-transparent" -->
+<div class="fixed inset-0 w-full h-full bg-transparent" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_4" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_4');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  /**
+ * Interfaz Presentador - Script Interactivo
+ * Funcionalidad: Colapsar/Expandir Menú Lateral y Modo Pantalla Completa (Fullscreen API)
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+  // -------------------------------------------------------------
+  // 1. LÓGICA DE PANTALLA COMPLETA (FULLSCREEN API)
+  // -------------------------------------------------------------
+  const fullscreenBtn = document.getElementById('btn-fullscreen');
+  const fullscreenText = document.getElementById('fullscreen-text');
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      // Solicitar entrar en modo pantalla completa
+      const targetElement = document.documentElement;
+      if (targetElement.requestFullscreen) {
+        targetElement.requestFullscreen().catch((err) => {
+          console.error(`Error al intentar activar pantalla completa: ${err.message}`);
+        });
+      } else if (targetElement.webkitRequestFullscreen) { /* Safari / WebKit */
+        targetElement.webkitRequestFullscreen();
+      } else if (targetElement.msRequestFullscreen) { /* IE11 / Edge antiguo */
+        targetElement.msRequestFullscreen();
+      }
+    } else {
+      // Salir de pantalla completa
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  }
+
+  // Sincronizar texto/estado ante cualquier cambio (incluye salir con tecla ESC)
+  document.addEventListener('fullscreenchange', handleFullscreenChange);
+  document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
+  function handleFullscreenChange() {
+    const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    if (fullscreenText) {
+      fullscreenText.textContent = isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa';
+    }
+    if (fullscreenBtn) {
+      fullscreenBtn.setAttribute('aria-pressed', isFullscreen);
+    }
+  }
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+  }
+
+  // -------------------------------------------------------------
+  // 2. LÓGICA PARA COLAPSAR / EXPANDIR MENÚ LATERAL
+  // -------------------------------------------------------------
+  const sidebar = document.getElementById('sidebar');
+  const toggleSidebarBtn = document.getElementById('btn-toggle-sidebar');
+  const sidebarLabels = document.querySelectorAll('.sidebar-label, .nav-text');
+
+  let isCollapsed = false;
+
+  function toggleSidebar() {
+    isCollapsed = !isCollapsed;
+
+    if (isCollapsed) {
+      // Modo colapsado: barra compacta mostrando solo los números/iconos
+      sidebar.classList.remove('w-64', 'p-5');
+      sidebar.classList.add('w-16', 'p-2.5');
+
+      sidebarLabels.forEach((el) => {
+        el.classList.add('hidden');
+      });
+    } else {
+      // Modo expandido: anchura completa con etiquetas visibles
+      sidebar.classList.remove('w-16', 'p-2.5');
+      sidebar.classList.add('w-64', 'p-5');
+
+      sidebarLabels.forEach((el) => {
+        el.classList.remove('hidden');
+      });
+    }
+  }
+
+  if (toggleSidebarBtn && sidebar) {
+    toggleSidebarBtn.addEventListener('click', toggleSidebar);
+  }
+});
+
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_4 -->
+</body>
+</html>
